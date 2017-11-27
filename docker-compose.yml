@@ -1,0 +1,87 @@
+---
+version: '1.0'
+services:
+# plex:
+#   image: plexinc/pms-docker:plexpass
+#   container_name: plex
+#   network_mode: host
+#   volumes:
+#     - /tardis/docker/containers/plex/config:/config 
+#     - /storage:/storage
+#     - /mnt/Data/plex:/transcode
+#   restart: unless-stopped
+#   hostname: Plex
+#   environment:
+#     - PUID=${PUID}
+#     - PGID=${PGID}
+#     - TZ=America/Denver
+# plexpy:
+#   image: linuxserver/plexpy
+#   container_name: plexpy
+#   network_mode: host
+#   depends_on:
+#     - plex
+#   volumes:
+#     - /tardis/docker/containers/plexpy/config:/config
+#     - /tardis/docker/containers/plex/config/Library/Application\ Support/Plex\ Media\ Server/Logs:/logs:ro
+#   restart: unless-stopped
+#   environment:
+#     - PUID=${PUID}
+#     - PGID=${PGID}
+#     - TZ=America/Denver
+  nzbget:
+    image: linuxserver/nzbget
+    container_name: nzbget
+    network_mode: host
+    volumes:
+      - /tardis/docker/containers/nzbget/config:/config
+      - /mnt/downloads/nzbget:/downloads
+      - /storage:/storage
+    restart: unless-stopped 
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=America/Denver
+  sonarr:
+    image: linuxserver/sonarr
+    container_name: sonarr
+    network_mode: host
+    depends_on:
+      - nzbget
+    volumes:
+      - /tardis/docker/containers/sonarr/config:/config
+      - /storage:/storage
+      - /mnt/downloads/nzbget/completed:/downloads/completed
+    restart: unless-stopped
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=America/Denver
+  radarr:
+    image: linuxserver/radarr
+    container_name: radarr
+    network_mode: host
+    depends_on:
+      - nzbget
+    volumes:
+      - /tardis/docker/containers/radarr/config:/config
+      - /mnt/downloads/nzbget:/downloads
+      - /storage:/storage
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=America/Denver
+    restart:
+      unless-stopped
+  ombi:
+    image: linuxserver/ombi
+    container_name: ombi
+    network_mode: host
+    volumes:
+      - /tardis/docker/containers/ombi/config:/config
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=America/Denver
+    restart: unless-stopped
+

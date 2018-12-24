@@ -84,3 +84,18 @@ services:
       - PGID=${PGID}
       - TZ=America/Denver
     restart: unless-stopped
+  mylar:
+    image: linuxserver/mylar
+    container_name: mylar
+    network_mode: host
+    depends_on:
+      - nzbget 
+    volumes:
+      - /tardis/docker/containers/sonarr/config:/config
+      - /storage:/storage
+      - /mnt/downloads/nzbget/completed:/downloads/completed
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=America/Denver
+     restart: unless-stopped

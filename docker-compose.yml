@@ -89,13 +89,13 @@ services:
     container_name: mylar
     network_mode: host
     depends_on:
-      - nzbget 
+      - nzbget
     volumes:
-      - /tardis/docker/containers/sonarr/config:/config
+      - /tardis/docker/containers/mylar/config:/config
       - /storage:/storage
       - /mnt/downloads/nzbget/completed:/downloads/completed
+    restart: unless-stopped
     environment:
       - PUID=${PUID}
       - PGID=${PGID}
       - TZ=America/Denver
-     restart: unless-stopped

@@ -99,3 +99,15 @@ services:
       - PUID=${PUID}
       - PGID=${PGID}
       - TZ=America/Denver
+  hydra2:
+    image: linuxserver/hydra2
+    container_name: hydra2
+    network_mode: host
+    volumes:
+      - /tardis/docker/containers/hydra2/config:/config
+      - /storage:/storage
+    restart: unless-stopped
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=America/Denver

@@ -18,7 +18,8 @@ services:
   plexpy:
    image: linuxserver/tautulli
    container_name: plexpy
-   network_mode: host
+    ports:
+      - 8181:8181
    depends_on:
      - plex
    volumes:
@@ -32,7 +33,8 @@ services:
   nzbget:
     image: linuxserver/nzbget
     container_name: nzbget
-    network_mode: host
+    ports:
+      - 6789:6789
     volumes:
       - /tardis/docker/containers/nzbget/config:/config
       - /mnt/downloads/nzbget:/downloads
@@ -45,7 +47,8 @@ services:
   sonarr:
     image: linuxserver/sonarr
     container_name: sonarr
-    network_mode: host
+    ports:
+      - 8989:8989
     depends_on:
       - nzbget
     volumes:
@@ -60,7 +63,8 @@ services:
   radarr:
     image: linuxserver/radarr
     container_name: radarr
-    network_mode: host
+    ports:
+      - 7878:7878
     depends_on:
       - nzbget
     volumes:
@@ -76,7 +80,6 @@ services:
   ombi:
     image: linuxserver/ombi
     container_name: ombi
-    network_mode: host
     volumes:
       - /tardis/docker/containers/ombi/config:/config
     environment:
@@ -84,10 +87,13 @@ services:
       - PGID=${PGID}
       - TZ=America/Denver
     restart: unless-stopped
+    ports:
+      - 3579:3579
   mylar:
     image: linuxserver/mylar
     container_name: mylar
-    network_mode: host
+    ports:
+      - 8090:8090
     depends_on:
       - nzbget
     volumes:
@@ -99,10 +105,9 @@ services:
       - PUID=${PUID}
       - PGID=${PGID}
       - TZ=America/Denver
-  hydra2:
+  hydra:
     image: linuxserver/hydra2
     container_name: hydra2
-    network_mode: host
     volumes:
       - /tardis/docker/containers/hydra2/config:/config
       - /storage:/storage
@@ -111,3 +116,38 @@ services:
       - PUID=${PUID}
       - PGID=${PGID}
       - TZ=America/Denver
+    ports:
+      - 5076:5076
+  letsencrypt:
+    image: linuxserver/letsencrypt
+    container_name: letsencrypt
+    restart: unless-stopped
+    privileged: true
+    volumes:
+      - /tardis/docker/containers/letsencrypt/config:/config
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=America/Denver
+      - EMAIL=cburkman@gmail.com
+      - ONLY_SUBDOMAINS=true
+      - URL=burkmans.com
+      - SUBDOMAINS=www,cloud,bamf,nextcloud,plex
+      - VALIDATION=http
+    ports:
+      - 80:80
+      - 443:443
+  duckdns:
+    image: linuxserver/duckdns
+    container_name: duckdns
+    network_mode: host
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=America/Denver
+      - SUBDOMAINS=burkmans.duckdns.org
+      - TOKEN=936059ed-670c-496e-8d2f-f667bd4b264f
+      - LOG_FILE=true
+    volumes:
+      - /tardis/docker/containers/duckdns/config:/config
+    restart: unless-stopped

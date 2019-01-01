@@ -18,7 +18,7 @@ services:
   plexpy:
    image: linuxserver/tautulli
    container_name: plexpy
-    ports:
+   ports:
       - 8181:8181
    depends_on:
      - plex
@@ -132,7 +132,7 @@ services:
       - EMAIL=cburkman@gmail.com
       - ONLY_SUBDOMAINS=true
       - URL=burkmans.com
-      - SUBDOMAINS=www,cloud,bamf,nextcloud,plex
+      - SUBDOMAINS=www,cloud,nzb,plex,requests
       - VALIDATION=http
     ports:
       - 80:80

@@ -151,3 +151,16 @@ services:
     volumes:
       - /tardis/docker/containers/duckdns/config:/config
     restart: unless-stopped
+  bazarr:
+    image: linuxserver/bazarr
+    container_name: bazarr
+    network_mode: host
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=America/Denver
+    volumes:
+      - /tardis/docker/containers/bazarr/config:/config
+    restart: unless-stopped
+    ports:
+      - 6767:6767

@@ -164,3 +164,18 @@ services:
     restart: unless-stopped
     ports:
       - 6767:6767
+  lidarr:
+    image: linuxserver/lidarr
+    container_name: lidarr
+    volumes:
+      - /tardis/docker/containers/lidarr/config:/config
+      - /mnt/downloads/nzbget:/downloads
+      - /storage:/storage
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=America/Denver
+    restart:
+      unless-stopped
+    ports:
+      - 8686:8686

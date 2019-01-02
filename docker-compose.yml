@@ -15,15 +15,15 @@ services:
      - PUID=${PUID}
      - PGID=${PGID}
      - TZ=America/Denver
-  plexpy:
+  tautulli:
    image: linuxserver/tautulli
-   container_name: plexpy
+   container_name: tautulli
    ports:
       - 8181:8181
    depends_on:
      - plex
    volumes:
-     - /tardis/docker/containers/plexpy/config:/config
+     - /tardis/docker/containers/tautulli/config:/config
      - /tardis/docker/containers/plex/config/Library/Application\ Support/Plex\ Media\ Server/Logs:/logs:ro
    restart: unless-stopped
    environment:

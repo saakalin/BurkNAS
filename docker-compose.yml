@@ -179,3 +179,18 @@ services:
       unless-stopped
     ports:
       - 8686:8686
+  sabnzbd:
+    image: linuxserver/sabnzbd
+    container_name: sabnzbd
+    ports:
+      - 8081:8080
+      - 9091:9090
+    volumes:
+      - /tardis/docker/containers/sabnzbd/config:/config
+      - /mnt/downloads/sabnzbd:/downloads
+      - /storage:/storage
+    restart: unless-stopped
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=America/Denver

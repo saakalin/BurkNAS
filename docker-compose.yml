@@ -72,6 +72,7 @@ services:
       - /tardis/docker/containers/radarr/config:/config
       - /mnt/downloads/nzbget:/downloads
       - /storage:/storage
+      - /mnt/downloads/sabnzbd:/downloads-sab
     environment:
       - PUID=${PUID}
       - PGID=${PGID}

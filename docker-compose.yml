@@ -70,9 +70,9 @@ services:
       - nzbget
     volumes:
       - /tardis/docker/containers/radarr/config:/config
-      - /mnt/downloads/nzbget:/downloads
+      - /mnt/downloads/nzbget:/downloads-nzbget
       - /storage:/storage
-      - /mnt/downloads/sabnzbd:/downloads-sab
+      - /mnt/downloads/sabnzbd:/downloads
     environment:
       - PUID=${PUID}
       - PGID=${PGID}

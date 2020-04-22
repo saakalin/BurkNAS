@@ -2,7 +2,7 @@
 version: '2'
 services:
   plex:
-   image: plexinc/pms-docker:plexpass
+   image: linuxserver/plex 
    container_name: plex
    network_mode: host
    volumes:
@@ -15,6 +15,7 @@ services:
      - PUID=${PUID}
      - PGID=${PGID}
      - TZ=America/Denver
+     - VERSION=latest
   tautulli:
    image: linuxserver/tautulli
    container_name: tautulli
@@ -30,27 +31,13 @@ services:
      - PUID=${PUID}
      - PGID=${PGID}
      - TZ=America/Denver
-  nzbget:
-    image: linuxserver/nzbget
-    container_name: nzbget
-    ports:
-      - 6789:6789
-    volumes:
-      - /tardis/docker/containers/nzbget/config:/config
-      - /mnt/downloads/nzbget:/downloads
-      - /storage:/storage
-    restart: unless-stopped
-    environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ=America/Denver
   sonarr:
-    image: linuxserver/sonarr
+    image: linuxserver/sonarr:preview
     container_name: sonarr
     ports:
       - 8989:8989
     depends_on:
-      - nzbget
+      - sabnzbd
     volumes:
       - /tardis/docker/containers/sonarr/config:/config
       - /storage:/storage
@@ -67,7 +54,7 @@ services:
     ports:
       - 7878:7878
     depends_on:
-      - nzbget
+      - sabnzbd
     volumes:
       - /tardis/docker/containers/radarr/config:/config
       - /mnt/downloads/nzbget:/downloads-nzbget
@@ -97,7 +84,7 @@ services:
     ports:
       - 8090:8090
     depends_on:
-      - nzbget
+      - sabnzbd
     volumes:
       - /tardis/docker/containers/mylar/config:/config
       - /storage:/storage

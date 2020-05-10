@@ -118,10 +118,10 @@ services:
       - PUID=${PUID}
       - PGID=${PGID}
       - TZ=America/Denver
-      - EMAIL=cburkman@gmail.com
+      - EMAIL=******
       - ONLY_SUBDOMAINS=true
-      - URL=burkmans.com
-      - SUBDOMAINS=www,cloud,nzb,plex,requests
+      - URL=******
+      - SUBDOMAINS=******
       - VALIDATION=http
     ports:
       - 80:80
@@ -135,7 +135,7 @@ services:
       - PGID=${PGID}
       - TZ=America/Denver
       - SUBDOMAINS=burkmans.duckdns.org
-      - TOKEN=936059ed-670c-496e-8d2f-f667bd4b264f
+      - TOKEN=******
       - LOG_FILE=true
     volumes:
       - /tardis/docker/containers/duckdns/config:/config

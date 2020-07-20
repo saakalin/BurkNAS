@@ -1,0 +1,203 @@
+---
+version: '2'
+services:
+  plex:
+   image: linuxserver/plex 
+   container_name: plex
+   network_mode: host
+   volumes:
+     - /tardis/docker/containers/plex/config:/config
+     - /storage:/storage
+     - /tardis/plex_data/plex:/transcode
+   restart: unless-stopped
+   hostname: BurkPlex
+   environment:
+     - PUID=${PUID}
+     - PGID=${PGID}
+     - TZ=America/Denver
+     - VERSION=latest
+  tautulli:
+   image: linuxserver/tautulli
+   container_name: tautulli
+   ports:
+      - 8181:8181
+   depends_on:
+     - plex
+   volumes:
+     - /tardis/docker/containers/tautulli/config:/config
+     - /tardis/docker/containers/plex/config/Library/Application\ Support/Plex\ Media\ Server/Logs:/logs:ro
+   restart: unless-stopped
+   environment:
+     - PUID=${PUID}
+     - PGID=${PGID}
+     - TZ=America/Denver
+  sonarr:
+    image: linuxserver/sonarr:preview
+    container_name: sonarr
+    ports:
+      - 8989:8989
+    depends_on:
+      - sabnzbd
+    volumes:
+      - /tardis/docker/containers/sonarr/config:/config
+      - /storage:/storage
+      - /mnt/downloads/sabnzbd/completed:/downloads/completed
+      - /mnt/downloads:/rootdownloads
+    restart: unless-stopped
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=America/Denver
+  radarr:
+    image: linuxserver/radarr
+    container_name: radarr
+    ports:
+      - 7878:7878
+    depends_on:
+      - sabnzbd
+    volumes:
+      - /tardis/docker/containers/radarr/config:/config
+      - /mnt/downloads/nzbget:/downloads-nzbget
+      - /storage:/storage
+      - /mnt/downloads/sabnzbd:/downloads
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=America/Denver
+    restart:
+      unless-stopped
+  ombi:
+    image: linuxserver/ombi
+    container_name: ombi
+    volumes:
+      - /tardis/docker/containers/ombi/config:/config
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=America/Denver
+    restart: unless-stopped
+    ports:
+      - 3579:3579
+  mylar:
+    image: linuxserver/mylar
+    container_name: mylar
+    ports:
+      - 8090:8090
+    depends_on:
+      - sabnzbd
+    volumes:
+      - /tardis/docker/containers/mylar/config:/config
+      - /storage:/storage
+      - /mnt/downloads/nzbget/completed:/downloads/completed
+    restart: unless-stopped
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=America/Denver
+  hydra:
+    image: linuxserver/hydra2
+    container_name: hydra2
+    volumes:
+      - /tardis/docker/containers/hydra2/config:/config
+      - /storage:/storage
+    restart: unless-stopped
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=America/Denver
+    ports:
+      - 5076:5076
+  letsencrypt:
+    image: linuxserver/letsencrypt
+    container_name: letsencrypt
+    restart: unless-stopped
+    privileged: true
+    volumes:
+      - /tardis/docker/containers/letsencrypt/config:/config
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=America/Denver
+      - EMAIL=cburkman@gmail.com
+      - ONLY_SUBDOMAINS=true
+      - URL=burkmans.com
+      - SUBDOMAINS=www,cloud,nzb,plex,requests
+      - VALIDATION=http
+    ports:
+      - 80:80
+      - 443:443
+  duckdns:
+    image: linuxserver/duckdns
+    container_name: duckdns
+    network_mode: host
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=America/Denver
+      - SUBDOMAINS=burkmans.duckdns.org
+      - TOKEN=936059ed-670c-496e-8d2f-f667bd4b264f
+      - LOG_FILE=true
+    volumes:
+      - /tardis/docker/containers/duckdns/config:/config
+    restart: unless-stopped
+  bazarr:
+    image: linuxserver/bazarr
+    container_name: bazarr
+    network_mode: host
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=America/Denver
+    volumes:
+      - /tardis/docker/containers/bazarr/config:/config
+    restart: unless-stopped
+    ports:
+      - 6767:6767
+  lidarr:
+    image: linuxserver/lidarr
+    container_name: lidarr
+    volumes:
+      - /tardis/docker/containers/lidarr/config:/config
+      - /mnt/downloads/nzbget:/downloads
+      - /storage:/storage
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=America/Denver
+    restart:
+      unless-stopped
+    ports:
+      - 8686:8686
+  sabnzbd:
+    image: linuxserver/sabnzbd
+    container_name: sabnzbd
+    ports:
+      - 8081:8080
+      - 9091:9090
+    volumes:
+      - /tardis/docker/containers/sabnzbd/config:/config
+      - /mnt/downloads/sabnzbd:/downloads
+      - /storage:/storage
+    restart: unless-stopped
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=America/Denver
+  calibre:
+    image: linuxserver/calibre
+    container_name: calibre
+    restart: unless-stopped
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=America/Denver
+      - GUAC_USER=admin #optional
+      - GUAC_PASS=e33bf2b07a6ffbfc09dadfa880327adb #optional
+      - UMASK_SET=022 #optional
+    volumes:
+      - /tardis/docker/containers/calibre/config:/config
+      - /storage/Books:/books
+    ports:
+      - 8880:8080
+      - 8881:8081
+    restart: unless-stopped

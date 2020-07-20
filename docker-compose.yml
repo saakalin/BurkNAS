@@ -183,3 +183,40 @@ services:
       - PUID=${PUID}
       - PGID=${PGID}
       - TZ=America/Denver
+  calibre:
+    image: linuxserver/calibre
+    container_name: calibre
+    restart: unless-stopped
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=America/Denver
+      - GUAC_USER=admin #optional
+      - GUAC_PASS=e33bf2b07a6ffbfc09dadfa880327adb #optional
+      - UMASK_SET=022 #optional
+    volumes:
+      - /tardis/docker/containers/calibre/config:/config
+      - /storage/Books:/books
+    ports:
+      - 8880:8080
+      - 8881:8081
+    restart: unless-stopped
+  radarr4k:
+    image: linuxserver/radarr
+    container_name: radarr4k
+    ports:
+      - 7877:7878
+    depends_on:
+      - sabnzbd
+    volumes:
+      - /tardis/docker/containers/radarr4k/config:/config
+      - /mnt/downloads/nzbget:/downloads-nzbget
+      - /storage:/storage
+      - /mnt/downloads/sabnzbd:/downloads
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=America/Denver
+    restart:
+      unless-stopped
+
